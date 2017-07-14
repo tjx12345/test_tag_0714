@@ -6,10 +6,14 @@
     - 开发新的项目还未上线的时候，使用分支，最终项目稳定以后合并分支
     - 项目稳定以后的升级，就需要打标签，tag
 * 1:提交后添加tag标签 
-    - 1：提交 2:打标签
+    - 1：提交
+        - git commit -m "提交信息" 
+     2:打标签
+        - git tag -a v1.1.1 -m "标签的信息"
 * 将tag推送到服务器
-    - push  --tags
+    - git push  origin master --tags
 * 查看tag
+    - git tag 
 * 删除tag
 
 #### 自定义过滤器
