@@ -1,0 +1,71 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>02_自定义指令_实现类似ng-if的功能</title>
+</head>
+<!-- ng-init="isShow=true" 被移除了，在控制器中玩 -->
+<body ng-app="app" >
+
+    <div ng-controller="myController">
+        {{isShow}}
+        <!-- is-show：替换成isShow无效 -->
+        <my-div is-show="{{isShow}}"></my-div>
+       <!-- 类比上面 <div ng-show="{{isShow}}"></div> -->
+
+    <button ng-click="changeBool()">改变isShow的值</button>
+
+    </div>
+    <script type="text/javascript" src="../angular.js"></script>
+    <script type="text/javascript">
+        (function(angular){
+            //创建模块对象
+            var app = angular.module('app',[]);
+
+            //测试scope之间的关系
+            app.controller('myController',function($scope){
+                window.myScope = $scope;
+                console.log($scope);
+                //声明是否显示
+                $scope.isShow = true;
+
+                //改变bool值
+                $scope.changeBool = function(){
+                    $scope.isShow = !$scope.isShow;
+                }
+            })
+
+            app.directive('myDiv',function(){
+                return {   //options，配置这个指令的功能
+                    restrict:'ECMA',
+                    template:'<h1>哈哈</h1>',
+                    // scope:true,
+                    //scope 默认值是false ,没有自己的独立的scope，使用父亲的scope
+                    //true 继承父亲的scope
+                    
+                    //自定义scope,涂老师这么说
+                    scope:{
+                        isShow:'@'
+                            //这个isShow有讲究,1:其可以单向数据绑定,你给我，我不管你
+                            //2:可以是双向数据绑定，你给我，我管你
+                            //3:其也可以是一个函数
+                    },
+                    //如果你当前引入了jquery的包，那么此时的element对象就是jq对象
+                    link:function(scope,element,attrs){
+                        // console.log(scope === window.myScope);
+                        // console.log(scope)
+                        //watch是需要必须是scope的属性，link中有DOM元素对象jqlite对象，从对象中获取[0]来拿原生的
+                        scope.$watch('isShow',function(newV,oldV){
+                            if(newV == 'false'){
+                                element[0].style.display = 'none';
+                            }else{
+                                element[0].style.display = 'block';
+                            }
+                        });
+                    }
+
+                }
+            })
+        })(angular);
+    </script>
+</body>
+</html>

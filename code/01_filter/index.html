@@ -1,0 +1,74 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>01_自定义过滤器</title>
+</head>
+<body ng-app="app" ng-controller="myController">
+        
+        <ul>
+            <li ng-repeat="stu in students | filter1:'A':'B' | filter2 track by stu.id">
+                {{stu.name}},{{stu.score}},{{stu.age}}
+            </li>
+        </ul>
+
+    <script type="text/javascript" src="../angular.js"></script>
+    <script type="text/javascript">
+        (function(angular){
+            //创建模块对象,如果第二个参数不给就是获取模块
+            var app = angular.module('app',[]);
+            //筛选一些成绩不太好的学生
+            //安全方式创建控制器
+            app.controller('myController',['$scope',function($scope){
+                $scope.students = [{
+                    id:1,name:'小红',score:'A',age:20
+                },{
+                    id:2,name:'宝宝',score:'S',age:18
+                },{
+                   id:3,name:'小猪',score:'D',age:50
+                }];                        
+            }]);
+
+
+            //{ xxx | orderBy:'+'}
+            //通过app对象来创建自定义过滤器
+            app.filter('filter1',function(){
+                //动词，返回一个函数(过滤的方式)
+                return function(collection,argv1,argv2){
+                    console.log(argv1,argv2);
+                    // console.log(collection);
+                    var tmp = [];
+                    for (var i = collection.length - 1; i >= 0; i--) {
+                        if(collection[i].score != 'D'){
+                            tmp.push(collection[i])
+                        }
+                    }
+                    //最终返回数据,数组
+                    return tmp;
+                }
+            });
+
+            //根据业务的复杂，以及封装的思想，单独的再来一个处理不同业务逻辑的过滤器
+            app.filter('filter2',function(){
+                //动词，返回一个函数(过滤的方式)
+                return function(collection,argv1,argv2){
+
+                    console.log('第二个过滤器拿到的集合对象',collection)
+
+
+                    var tmp = [];
+                    for (var i = collection.length - 1; i >= 0; i--) {
+                        if(collection[i].age < 20){
+                            tmp.push(collection[i])
+                        }
+                    }
+                    //最终返回数据,数组
+                    return tmp;
+                }
+            })
+
+
+        })(angular);
+
+    </script>
+</body>
+</html>

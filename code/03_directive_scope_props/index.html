@@ -1,0 +1,60 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>02_自定义指令_实现类似ng-if的功能</title>
+</head>
+
+<body ng-app="app" >
+
+    <div ng-controller="myController">
+       输入你的msg: <input type="text" name="" ng-model="msg">
+       <br/>
+       显示你的msg: <my-div my-msg="msg"></my-div>
+   
+
+    </div>
+    <script type="text/javascript" src="../angular.js"></script>
+    <script type="text/javascript">
+        (function(angular){
+            //创建模块对象
+            var app = angular.module('app',[]);
+
+            //测试scope之间的关系
+            app.controller('myController',function($scope){
+               
+                $scope.isShow = true;
+
+                //改变bool值
+                $scope.changeBool = function(){
+                    $scope.isShow = !$scope.isShow;
+                }
+            })
+
+            app.directive('myDiv',function(){
+                return {   //options，配置这个指令的功能
+                    restrict:'ECMA',
+                    // template:'<h1>{{myMsg}}</h1>',  //单向双向的用法
+                    template:'<h1>{{myMsg()}}</h1>', //函数的用法
+                    scope:{
+                        // myMsg:'@', 单向
+                        // myMsg:'=', //双向
+                        // myMsg:'&'   作为一个函数返回数据
+                            //这个isShow有讲究,1:其可以单向数据绑定,你给我，我不管你
+                            //2:可以是双向数据绑定，你给我，我管你
+                            //3:其也可以是一个函数
+                    },
+              
+                    link:function(scope,element,attrs){
+                      
+                       scope.$watch('myMsg',function(newV,oldV){
+                            //scope.myMsg = 'abc'; 能够改变外部传递的那个ng-model,两个变量已经就是双向数据绑定
+                            //传递的 接收的 都绑在了一个值上面
+                       });
+                    }
+
+                }
+            })
+        })(angular);
+    </script>
+</body>
+</html>
